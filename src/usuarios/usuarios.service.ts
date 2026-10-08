@@ -1,4 +1,8 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import {
+    ConflictException,
+    Injectable,
+    InternalServerErrorException,
+} from '@nestjs/common';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
 import { UsuarioEntity } from './entities/usuario.entity';
 import { Repository } from 'typeorm';
@@ -61,7 +65,21 @@ export class UsuariosService {
             mesage: 'Usuario creado exitosamente',
             user: userWithoutPassword
         }
+    }
 
-        
+    async createForRegistration(
+        registerData: Omit<CreateUsuarioDto, 'rolId'>,
+    ) {
+        const defaultRole = await this.rolService.findByName('cliente');
+        if (!defaultRole) {
+            throw new InternalServerErrorException(
+                'El rol cliente no está configurado para el registro público',
+            );
+        }
+
+        return this.create({
+            ...registerData,
+            rolId: defaultRole.id,
+        });
     }
 }

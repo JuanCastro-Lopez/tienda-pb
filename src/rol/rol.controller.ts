@@ -7,12 +7,18 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 import { CreateRolDto } from './dto/create-rol.dto';
 import { UpdateRolDto } from './dto/update-rol.dto';
 import { RolService } from './rol.service';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { RoleGuard } from 'src/auth/guards/role.guard';
+import { Roles } from 'src/auth/decorators/roles.decorator';
 
 @Controller('roles')
+@UseGuards(JwtAuthGuard, RoleGuard)
+@Roles('admin')
 export class RolController {
   constructor(private readonly rolService: RolService) {}
 

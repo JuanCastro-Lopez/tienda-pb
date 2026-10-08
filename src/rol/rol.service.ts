@@ -44,6 +44,13 @@ export class RolService {
       .getMany();
   }
 
+  async findByName(nombre: string): Promise<RolEntity | null> {
+    return this.rolRepository
+      .createQueryBuilder('rol')
+      .where('rol.nombre = :nombre', { nombre })
+      .getOne();
+  }
+
   async findOne(id: number): Promise<RolEntity> {
     const role = await this.rolRepository
       .createQueryBuilder('rol')
